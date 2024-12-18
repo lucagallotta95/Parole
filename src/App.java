@@ -46,9 +46,18 @@ public class App {
 
         System.out.println("Risposte Giocatore 1 " + rispostaGicatore1.toString());
         System.out.println("Risposta Giocatore 2 " + rispostaGicatore2.toString());
+        if (rispostaGicatore1.size()==rispostaGicatore2.size()) {
+            System.out.println("Pareggio!");
+        } else if (rispostaGicatore1.size()>rispostaGicatore2.size()) {
+            System.out.println("ha vinto giocatore 1");
+        }else {
+                System.out.println("ha vinto giocatore 2");
+            
+            }
 
 
-        sc.close();
+        
 
-    }
+    } 
 }
+
