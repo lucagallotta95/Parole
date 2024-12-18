@@ -1,0 +1,92 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.Scanner;
+
+public class WordInWordGame {
+    private static final int NUM_TURNI = 5;
+    private static final int TEMPO_LIMITE = 10; // secondi
+    private static final ArrayList<String> PAROLE = new ArrayList<>(Arrays.asList(
+        "mare", "sole", "pane", "casa", "vento", "notte", "gatto", "cane", "fiore", "fiume"
+    ));
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
+        
+        ArrayList<String> risposteGiocatore1 = new ArrayList<>();
+        ArrayList<String> risposteGiocatore2 = new ArrayList<>();
+        long tempoTotaleGiocatore1 = 0, tempoTotaleGiocatore2 = 0;
+
+        System.out.println("Benvenuto al gioco Word in Word!\n");
+
+        for (int turno = 1; turno <= NUM_TURNI; turno++) {
+            System.out.println("Turno " + turno);
+
+            // Estrae parola casuale
+            String parolaEstratta = PAROLE.get(random.nextInt(PAROLE.size()));
+            System.out.println("Parola estratta: " + parolaEstratta);
+
+            // Giocatore 1
+            System.out.print("Giocatore 1, inserisci una parola: ");
+            long inizioTempo = System.currentTimeMillis();
+            String risposta1 = riceviRispostaConTimeout(scanner);
+            long tempoImpiegato1 = (System.currentTimeMillis() - inizioTempo) / 1000;
+
+            if (tempoImpiegato1 <= TEMPO_LIMITE && risposta1.contains(parolaEstratta)) {
+                risposteGiocatore1.add(risposta1);
+                System.out.println("Risposta corretta!");
+            } else {
+                System.out.println("Risposta scartata!");
+            }
+            tempoTotaleGiocatore1 += Math.min(tempoImpiegato1, TEMPO_LIMITE);
+
+            // Giocatore 2
+            System.out.print("Giocatore 2, inserisci una parola: ");
+            inizioTempo = System.currentTimeMillis();
+            String risposta2 = riceviRispostaConTimeout(scanner);
+            long tempoImpiegato2 = (System.currentTimeMillis() - inizioTempo) / 1000;
+
+            if (tempoImpiegato2 <= TEMPO_LIMITE && risposta2.contains(parolaEstratta)) {
+                risposteGiocatore2.add(risposta2);
+                System.out.println("Risposta corretta!");
+            } else {
+                System.out.println("Risposta scartata!");
+            }
+            tempoTotaleGiocatore2 += Math.min(tempoImpiegato2, TEMPO_LIMITE);
+        }
+
+        // Visualizzare il vincitore
+        System.out.println("\n--- RISULTATI FINALI ---");
+        System.out.println("Giocatore 1 ha totalizzato " + risposteGiocatore1.size() + " risposte corrette in " + tempoTotaleGiocatore1 + " secondi.");
+        System.out.println("Giocatore 2 ha totalizzato " + risposteGiocatore2.size() + " risposte corrette in " + tempoTotaleGiocatore2 + " secondi.");
+
+        if (risposteGiocatore1.size() > risposteGiocatore2.size()) {
+            System.out.println("Giocatore 1 vince!");
+        } else if (risposteGiocatore2.size() > risposteGiocatore1.size()) {
+            System.out.println("Giocatore 2 vince!");
+        } else {
+            System.out.println("Pareggio! Vince chi ha impiegato meno tempo...");
+            if (tempoTotaleGiocatore1 < tempoTotaleGiocatore2) {
+                System.out.println("Giocatore 1 vince per il tempo!");
+            } else if (tempoTotaleGiocatore2 < tempoTotaleGiocatore1) {
+                System.out.println("Giocatore 2 vince per il tempo!");
+            } else {
+                System.out.println("È un pareggio totale!");
+            }
+        }
+
+        scanner.close();
+    }
+
+    private static String riceviRispostaConTimeout(Scanner scanner) {
+        long startTime = System.currentTimeMillis();
+        String risposta = "";
+        while ((System.currentTimeMillis() - startTime) / 1000 < TEMPO_LIMITE && risposta.isEmpty()) {
+            if (scanner.hasNextLine()) {
+                risposta = scanner.nextLine();
+            }
+        }
+        return risposta.isEmpty() ? "" : risposta;
+    }
+}
